@@ -1,30 +1,38 @@
 # Sira Équilibre
 
-Application indépendante de bien-être et de soutien émotionnel, développée séparément de Sira AI.
+**Application indépendante de bien-être et de soutien émotionnel**, hébergée séparément de Sira AI.
 
-## État actuel
+## Application en ligne
 
-- Interface autonome : conversation temporaire, respiration guidée, ancrage 5–4–3–2–1 et check-in émotionnel local avec consentement.
-- Les messages ne sont pas enregistrés dans un historique personnel par cette interface.
-- L'application ne pose pas de diagnostic et ne remplace pas un professionnel de santé.
-- Le moteur conversationnel nécessite le raccordement sécurisé au serveur Sira.
+- Site : https://sira-equilibre.vercel.app/
+- Dépôt : https://github.com/afiss859-eng/IA_-th-rapie-
+- Hébergement : projet Vercel autonome `sira-equilibre`
 
-## Raccordement API prévu
+## Fonctionnalités
 
-Le navigateur attend une variable globale définie avant le chargement de `accompagnement.js` :
+- Conversation avec Sira Équilibre en mode bien-être dédié.
+- Exercices guidés de respiration et d’ancrage 5–4–3–2–1.
+- Check-in émotionnel stocké localement uniquement après consentement.
+- Dictée vocale et lecture des réponses lorsque le navigateur les prend en charge.
+- Effacement de la conversation et des check-ins locaux.
 
-```html
-<script>window.SIRA_API_BASE_URL = "https://API-SIRA-A-CONFIGURER";</script>
-```
+## Architecture et sécurité
 
-Le serveur partagé devra autoriser explicitement l'origine de cette application (CORS), vérifier le JWT Supabase, appliquer les limites d'usage et n'exposer aucune clé fournisseur au navigateur. Les clés restent exclusivement côté serveur dans Sira AI.
+L'interface reste dans ce dépôt indépendant. Pour la conversation, elle utilise les routes publiques de l'API Sira AI :
 
-Endpoints attendus :
-- `GET /api/config`
-- `POST /api/chat` avec `assistantType: "wellbeing"`
+- `GET https://faso-ai-studio.vercel.app/api/config`
+- `POST https://faso-ai-studio.vercel.app/api/chat`
 
-**Important :** le raccordement API n'est pas encore activé. Ne publie pas l'application comme service conversationnel tant que l'API partagée et les contrôles de sécurité ne sont pas vérifiés.
+Le navigateur initialise Supabase avec la clé *publishable* fournie par la configuration publique, puis transmet un JWT de session à l'API. Le serveur Sira AI conserve les clés des fournisseurs IA et les secrets privés. L'API applique l'authentification Supabase, les contrôles d'accès, les protections anti-rafale et le quota partagé.
 
-## Lancement local
+L'API autorise les origines exactes `https://faso-ai-studio.vercel.app` et `https://sira-equilibre.vercel.app`. Aucun secret fournisseur ni clé de service Supabase ne doit être placé dans ce dépôt ou dans le JavaScript client.
 
-Ouvre `accompagnement.html` via un serveur statique local (pas directement en `file://` pour les fonctionnalités web dépendantes du navigateur).
+## Confidentialité et limites
+
+Les messages sont transmis au moteur IA de Sira AI pour générer une réponse, mais cette interface ne sauvegarde pas la conversation dans un historique personnel. Les check-ins sont enregistrés dans le stockage local du navigateur uniquement lorsque l'utilisateur coche la case de consentement. Effacer les données du navigateur efface ces check-ins.
+
+Sira Équilibre est un outil de bien-être général. Il ne réalise pas de diagnostic, ne prescrit aucun traitement et ne remplace pas un professionnel de santé. En cas de danger immédiat, l'aide humaine et les services d'urgence locaux priment sur le chat.
+
+## Développement
+
+L'application est un site HTML/CSS/JavaScript statique. Ouvre `accompagnement.html` via un serveur web local. Le simple protocole `file://` n'est pas adapté à l'authentification et aux requêtes API.
