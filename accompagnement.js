@@ -1,7 +1,7 @@
 "use strict";
 (function () {
   function apiUrl(path) {
-    const base = String(window.SIRA_API_BASE_URL || "").trim().replace(/\\/+$/, "");
+    const base = String(window.SIRA_API_BASE_URL || "").trim().replace(/\/+$/, "");
     if (!base) throw new Error("Le serveur partagé Sira n’est pas encore relié. Les exercices restent disponibles.");
     return base + path;
   }
