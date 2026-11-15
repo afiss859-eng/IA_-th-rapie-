@@ -87,8 +87,8 @@
       if (state.session && state.session.access_token) {
         onAuthenticated();
       } else {
-        setStatus("authStatus", "Aucune session active. Tu peux démarrer une session invitée ou te connecter depuis Sira AI.");
-        guestButton.textContent = "Continuer en invité";
+        setStatus("authStatus", "Pour commencer à discuter, ouvre une session invitée gratuite.");
+        guestButton.textContent = "Commencer à discuter";
       }
       state.client.auth.onAuthStateChange((event, session) => {
         if (session && session.access_token) {
@@ -107,9 +107,9 @@
 
   function onAuthenticated() {
     $("authGate").hidden = true;
+    $("connectionLabel").textContent = "En ligne";
     $("messageInput").disabled = false;
     $("sendButton").disabled = false;
-    $("micButton").disabled = false;
     $("chatStatus").textContent = state.config && state.config.assistantConfigured === false
       ? "Connexion prête. Le moteur IA doit encore être configuré côté serveur ; les exercices restent accessibles."
       : "Session active. Cette conversation reste uniquement dans cette page et ne sera pas restaurée après sa fermeture.";
@@ -117,9 +117,9 @@
 
   function onSignedOut() {
     $("authGate").hidden = false;
+    $("connectionLabel").textContent = "Hors ligne";
     $("messageInput").disabled = true;
     $("sendButton").disabled = true;
-    $("micButton").disabled = true;
     setStatus("authStatus", "La session a été fermée. Redémarre en mode invité ou retourne à Sira AI.");
   }
 
@@ -201,13 +201,12 @@
     state.busy = true;
     $("messageInput").value = "";
     $("sendButton").disabled = true;
-    $("micButton").disabled = true;
     $("messageInput").disabled = true;
     state.messages.push({ role: "user", content });
     appendMessage("user", content);
     const answerBubble = appendMessage("assistant", "Sira prépare une réponse prudente…");
     answerBubble.style.opacity = ".72";
-    setStatus("chatStatus", "Réflexion en cours…");
+    setStatus("chatStatus", "Sira écrit…");
     try {
       const sessionResult = await state.client.auth.getSession();
       if (sessionResult.error) throw sessionResult.error;
@@ -277,7 +276,7 @@
         actions.appendChild(listen);
         wrap.appendChild(actions);
       }
-      setStatus("chatStatus", "Réponse terminée. Tu peux poursuivre ou faire une pause.");
+      setStatus("chatStatus", "");
     } catch (error) {
       answerBubble.textContent = error && error.message ? error.message : "Une erreur est survenue. Réessaie plus tard.";
       answerBubble.style.opacity = "1";
@@ -286,7 +285,6 @@
       state.busy = false;
       $("messageInput").disabled = !state.session;
       $("sendButton").disabled = !state.session;
-      $("micButton").disabled = !state.session;
       $("messageInput").focus();
     }
   }
@@ -470,9 +468,7 @@
       setStatus("chatStatus", "La conversation affichée a été effacée.");
       if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     });
-    initBreathing();
-    initMoodCheckins();
-    initVoiceInput();
+
   }
 
   initControls();
