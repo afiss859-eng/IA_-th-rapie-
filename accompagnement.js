@@ -445,30 +445,6 @@
         sendMessage($("messageInput").value);
       }
     });
-    document.querySelectorAll("[data-prompt]").forEach((button) => {
-      button.addEventListener("click", () => {
-        const input = $("messageInput");
-        input.value = button.dataset.prompt || "";
-        input.focus();
-      });
-    });
-    $("groundingToggle").addEventListener("click", () => {
-      const node = $("groundingSteps");
-      node.hidden = !node.hidden;
-      $("groundingToggle").setAttribute("aria-expanded", String(!node.hidden));
-      $("groundingToggle").textContent = node.hidden ? "Afficher l’exercice 5–4–3–2–1" : "Masquer l’exercice";
-    });
-    $("resetConversation").addEventListener("click", () => {
-      state.messages = [];
-      $("chatMessages").textContent = "";
-      const welcome = document.createElement("div");
-      welcome.className = "welcome-message";
-      welcome.innerHTML = '<span class="welcome-mark">S</span><div><strong>Conversation effacée.</strong><p>Tu peux repartir à ton rythme. Aucun historique de cette page n’a été enregistré.</p></div>';
-      $("chatMessages").appendChild(welcome);
-      setStatus("chatStatus", "La conversation affichée a été effacée.");
-      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
-    });
-
   }
 
   initControls();
