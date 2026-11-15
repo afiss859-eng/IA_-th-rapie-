@@ -3,161 +3,53 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#0a1730">
-  <meta name="description" content="Sira Équilibre : un espace de soutien émotionnel, d'exercices de bien-être et d'orientation vers une aide humaine.">
-  
-  <link rel="stylesheet" href="./accompagnement.css?v=1">
-  <title>Sira Équilibre — Bien-être</title>
+  <meta name="theme-color" content="#08172b">
+  <meta name="description" content="Sira Équilibre, un chatbot simple, naturel et bienveillant pour parler de ce que tu ressens.">
+  <title>Sira Équilibre — Parlons simplement</title>
+  <link rel="stylesheet" href="./accompagnement.css?v=2">
   <script>window.SIRA_API_BASE_URL = "https://faso-ai-studio.vercel.app";</script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.3/dist/umd/supabase.js" defer crossorigin="anonymous"></script>
-  <script src="./accompagnement.js?v=1" defer></script>
+  <script src="./accompagnement.js?v=2" defer></script>
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="https://faso-ai-studio.vercel.app/" aria-label="Retour à Sira AI">
-      <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M8 35.5V12.5h6.4l9.6 13 9.6-13H40v23h-6.7V22.4L24 35 14.7 22.4v13.1H8Z" fill="currentColor"/><circle cx="38.5" cy="8.5" r="3.5" fill="#E7B64A"/></svg></span>
-      <span><strong>SIRA AI</strong><small>ESPACE DE BIEN-ÊTRE</small></span>
+      <span class="brand-mark" aria-hidden="true">S</span>
+      <span><strong>Sira Équilibre</strong><small>Je suis là pour t’écouter</small></span>
     </a>
-    <div class="top-actions">
-      <span class="online-label"><i></i> Espace de soutien</span>
-      <a class="back-link" href="https://faso-ai-studio.vercel.app/">← Sira AI</a>
-    </div>
+    <span class="online-label"><i></i><span id="connectionLabel">Connexion…</span></span>
   </header>
 
-  <main class="shell">
-    <section class="hero">
-      <div class="eyebrow"><span class="eyebrow-line"></span> SIRA ÉQUILIBRE · BURKINA FASO</div>
-      <h1>Un espace pour <em>souffler</em>, mettre des mots et avancer.</h1>
-      <p>Tu peux parler de ce que tu ressens, découvrir des exercices simples et trouver le bon moment pour demander un soutien humain.</p>
-      <div class="hero-note"><span class="shield">✓</span><span><strong>Un complément, jamais un remplacement.</strong> Sira Équilibre est une intelligence artificielle d’accompagnement au bien-être. Elle ne pose pas de diagnostic et ne remplace pas un psychologue, un psychiatre ou un médecin.</span></div>
-    </section>
-
-    <section id="authGate" class="auth-gate" hidden>
-      <div>
-        <strong>Ouvre la conversation sécurisée</strong>
-        <p>Tu peux continuer avec une session invitée Sira AI. Tes messages sur cette page ne sont pas conservés dans un historique personnel.</p>
-        <div id="authStatus" class="status" role="status" aria-live="polite">Vérification de la connexion…</div>
+  <main class="chat-shell">
+    <section class="chat-card" aria-label="Conversation avec Sira Équilibre">
+      <div class="chat-heading">
+        <div class="assistant-avatar" aria-hidden="true">S</div>
+        <div><h1>Sira Équilibre</h1><p>Un échange simple, calme et sans jugement.</p></div>
       </div>
-      <button class="button primary" id="guestStart" type="button" disabled>Continuer en invité</button>
-    </section>
 
-    <div class="workspace">
-      <section class="chat-card">
-        <div class="card-heading">
-          <div class="assistant-avatar" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M24 5 28 17l12 4-12 4-4 12-4-12-12-4 12-4 4-12Z" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/><circle cx="37" cy="10" r="3" fill="#E7B64A"/></svg></div>
-          <div><h2>Parler avec Sira</h2><p>Une écoute respectueuse, sans jugement.</p></div>
-          <span class="ai-tag">IA</span>
-        </div>
-        <div id="chatMessages" class="messages" aria-live="polite" aria-label="Conversation">
-          <div class="welcome-message">
-            <span class="welcome-mark">S</span>
-            <div><strong>Bonjour, je suis Sira Équilibre.</strong><p>Qu’est-ce qui prend le plus de place dans tes pensées aujourd’hui ? Tu peux commencer par quelques mots, sans tout expliquer.</p></div>
-          </div>
-        </div>
-        <div class="suggestions" aria-label="Suggestions de sujets">
-          <button type="button" data-prompt="Je me sens stressé(e) et j’aimerais comprendre ce qui se passe.">Je me sens stressé(e)</button>
-          <button type="button" data-prompt="J’ai du mal à mettre un nom sur mes émotions. Aide-moi à y voir plus clair.">Comprendre mes émotions</button>
-          <button type="button" data-prompt="J’aimerais faire un exercice simple pour me détendre.">Faire une pause</button>
-        </div>
-        <form id="chatForm" class="composer">
-          <label class="sr-only" for="messageInput">Écris ce que tu souhaites partager</label>
-          <textarea id="messageInput" rows="2" maxlength="4000" placeholder="Écris ce que tu souhaites partager…" disabled></textarea>
-          <div class="composer-footer">
-            <span>Tu peux rester général. Évite les noms, adresses et informations qui identifient quelqu’un.</span>
-            <div class="compose-actions">
-              <button class="icon-button" id="micButton" type="button" title="Dicter un message" aria-label="Dicter un message">🎙</button>
-              <button class="button primary send-button" id="sendButton" type="submit" disabled>Envoyer <span aria-hidden="true">↑</span></button>
-            </div>
-          </div>
-        </form>
-        <div id="chatStatus" class="status chat-status" role="status" aria-live="polite">Les exercices restent accessibles même sans connexion.</div>
+      <section id="authGate" class="auth-gate" hidden>
+        <p id="authStatus" role="status">Préparation de la connexion sécurisée…</p>
+        <button class="guest-button" id="guestStart" type="button" disabled>Commencer à discuter</button>
       </section>
 
-      <aside class="side-column">
-        <section class="tool-card breathing-card">
-          <div class="section-kicker">PAUSE GUIDÉE · 36 SECONDES</div>
-          <h2>Respirer doucement</h2>
-          <p>Un rythme simple, à ton aise. Ne force jamais ta respiration et arrête si tu ressens un inconfort.</p>
-          <div class="breath-visual" id="breathVisual">
-            <div class="breath-orbit"><span id="breathPhase">Prêt(e) ?</span><small id="breathCount">3 cycles</small></div>
-          </div>
-          <div class="breath-timer" id="breathTimer">00:36</div>
-          <div class="breath-controls">
-            <button class="button primary" id="breathStart" type="button">Commencer</button>
-            <button class="button secondary" id="breathStop" type="button" disabled>Arrêter</button>
-          </div>
-          <p class="micro-copy">Inspire 4 s · pause douce 2 s · expire 6 s. Tu peux simplement respirer normalement à la place.</p>
-        </section>
-
-        <section class="tool-card">
-          <div class="section-kicker">REVENIR AU MOMENT PRÉSENT</div>
-          <h2>Exercice d’ancrage</h2>
-          <p>Quand tes pensées vont dans tous les sens, prends le temps de remarquer ton environnement.</p>
-          <button class="button secondary full-button" id="groundingToggle" type="button" aria-expanded="false">Afficher l’exercice 5–4–3–2–1</button>
-          <div id="groundingSteps" class="grounding-steps" hidden>
-            <div><b>5</b><span>choses que tu vois autour de toi</span></div>
-            <div><b>4</b><span>choses que tu peux toucher</span></div>
-            <div><b>3</b><span>sons que tu peux entendre</span></div>
-            <div><b>2</b><span>odeurs que tu peux remarquer</span></div>
-            <div><b>1</b><span>chose que tu peux goûter, ou une sensation agréable</span></div>
-            <p>Prends ton temps. Tu peux adapter ou arrêter cet exercice à tout moment.</p>
-          </div>
-        </section>
-
-        <section class="tool-card checkin-card">
-          <div class="section-kicker">FAIRE LE POINT</div>
-          <h2>Comment te sens-tu ?</h2>
-          <p>Choisis ce qui se rapproche le plus de ton état actuel. Aucune réponse n’est mauvaise.</p>
-          <label class="field-label" for="moodSelect">Mon émotion du moment</label>
-          <select id="moodSelect">
-            <option value="">Choisir une émotion…</option>
-            <option value="Calme">Calme</option>
-            <option value="Joie">Joie</option>
-            <option value="Tristesse">Tristesse</option>
-            <option value="Stress">Stress</option>
-            <option value="Colère">Colère</option>
-            <option value="Solitude">Solitude</option>
-            <option value="Fatigue">Fatigue</option>
-            <option value="Confusion">Confusion</option>
-            <option value="Autre">Autre / difficile à nommer</option>
-          </select>
-          <label class="consent-row"><input id="localMoodConsent" type="checkbox"><span>J’autorise l’enregistrement de mes check-ins sur cet appareil uniquement.</span></label>
-          <button class="button primary full-button" id="saveMood" type="button">Enregistrer mon check-in</button>
-          <div id="moodStatus" class="status" role="status" aria-live="polite"></div>
-          <div id="moodHistory" class="mood-history"></div>
-          <button class="text-button" id="clearMood" type="button" hidden>Effacer mes check-ins de cet appareil</button>
-        </section>
-
-        <section class="tool-card human-card">
-          <div class="section-kicker">LE SOUTIEN HUMAIN COMPTE</div>
-          <h2>Parler à une personne qualifiée</h2>
-          <p>Quand une difficulté dure, devient trop lourde ou perturbe ton quotidien, un échange humain peut aider.</p>
-          <ul>
-            <li>Un psychologue ou un psychiatre.</li>
-            <li>Un médecin ou un centre de santé.</li>
-            <li>Un conseiller scolaire, un travailleur social ou un adulte de confiance.</li>
-          </ul>
-          <p class="micro-copy">Sira ne vérifie pas ici les disponibilités des professionnels. Demande à une structure de santé locale quelles possibilités existent dans ta zone.</p>
-        </section>
-      </aside>
-    </div>
-
-    <section class="urgent-card">
-      <div class="urgent-icon" aria-hidden="true">!</div>
-      <div><strong>Tu es en danger immédiat, ou tu penses te faire du mal ou faire du mal à quelqu’un ?</strong>
-        <p>Ne compte pas uniquement sur cette conversation. Contacte immédiatement les services d’urgence locaux ou rends-toi dans une structure de santé. Si possible et sans te mettre en danger, rejoins une personne de confiance, dis-lui clairement ce qui se passe et ne reste pas seul(e).</p>
+      <div id="chatMessages" class="messages" aria-live="polite" aria-label="Messages">
+        <div class="message assistant">
+          <div class="bubble-avatar">S</div>
+          <div class="bubble-wrap"><div class="bubble">Bonjour 😊 Je suis Sira. Tu peux me parler naturellement, comme à quelqu’un qui prend le temps de t’écouter. Comment vas-tu aujourd’hui ?</div></div>
+        </div>
       </div>
-    </section>
 
-    <section class="privacy-card">
-      <span class="privacy-icon" aria-hidden="true">⌑</span>
-      <div><strong>Ta vie privée, avec des limites clairement expliquées</strong>
-        <p>Les messages envoyés au chat sont transmis au moteur IA configuré par Sira AI pour produire une réponse. Cette page ne sauvegarde pas la conversation dans un historique. Les check-ins ne sont enregistrés que si tu coches la case de consentement, et restent dans le stockage local de ce navigateur. N’utilise pas cet espace pour transmettre des informations permettant de t’identifier.</p>
-      </div>
-      <button class="text-button" id="resetConversation" type="button">Effacer la conversation</button>
+      <div id="chatStatus" class="chat-status" role="status" aria-live="polite"></div>
+
+      <form id="chatForm" class="composer">
+        <label class="sr-only" for="messageInput">Ton message</label>
+        <textarea id="messageInput" rows="1" maxlength="4000" placeholder="Écris ton message…" disabled></textarea>
+        <button class="send-button" id="sendButton" type="submit" aria-label="Envoyer le message" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-5.5 16-2.8-6.7L4 12Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m11.7 13.3 4.1-4.1" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+      </form>
+      <p class="privacy-note">Tu peux parler librement, mais évite de partager des informations personnelles sensibles. Sira Équilibre offre un soutien général et ne remplace pas un professionnel.</p>
     </section>
   </main>
-
-  <footer> SIRA ÉQUILIBRE · Un outil numérique d’information et de bien-être · Burkina Faso </footer>
 </body>
 </html>
